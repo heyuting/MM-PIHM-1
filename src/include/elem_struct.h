@@ -556,6 +556,17 @@ typedef struct eflux_struct
 #endif
 } eflux_struct;
 
+#if defined(_BGC_) || defined(_CYCLES_) || defined(_RT_)
+typedef struct solute_struct
+{
+    double          conc_surf[NSOLUTE];     /* surface concentration */
+    double          conc[NSOLUTE];          /* subsurface concentration */
+    double          infil[NSOLUTE];         /* infiltration */
+    double          ovlflux[NUM_EDGE][NSOLUTE];/* overland solute flux */
+    double          subflux[NUM_EDGE][NSOLUTE];/* subsurface solute flux */
+} solute_struct;
+#endif
+
 #if defined(_CYCLES_)
 typedef struct epvar_struct
 {
@@ -1605,10 +1616,6 @@ typedef struct chmstate_struct
 
 typedef struct chmflux_struct
 {
-    double          infil[MAXSPS];          /* chemical flux from infiltration
-                                             * (mol s-1) */
-    double          subflux[NUM_EDGE][MAXSPS];/* chemical flux from subsurface
-                                             * lateral flux (mol s-1) */
     double          react[MAXSPS];          /* reaction flux in unsaturated zone
                                              * (mol s-1) */
 # if defined(_FBR_)
@@ -1660,6 +1667,9 @@ typedef struct elem_struct
     estate_struct   es;
     eflux_struct    ef;
     pstate_struct   ps;
+#if defined(_BGC_) || defined(_CYCLES_) || defined(_RT_)
+    solute_struct   solute;
+#endif
 #if defined(_BGC_)
     bgcic_struct    restart_input;
     bgcic_struct    restart_output;
@@ -1708,4 +1718,5 @@ typedef struct elem_struct
     chmflux_struct  chmf;
 #endif
 } elem_struct;
+
 #endif

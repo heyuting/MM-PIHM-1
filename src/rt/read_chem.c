@@ -215,6 +215,7 @@ void ReadChem(const char chem_filen[], const char cdbs_filen[],
             " mineral, surface complexation, and cation exchange species.\n");
         PIHMexit(EXIT_FAILURE);
     }
+    nsolute = NumSpc;
 
     /* The number of species that others depend on */
     rttbl->NumSdc = rttbl->NumStc - rttbl->NumMin;

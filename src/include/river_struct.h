@@ -81,6 +81,14 @@ typedef struct river_ic_struct
     double          stage;
 } river_ic_struct;
 
+#if defined(_BGC_) || defined(_CYCLES_) || defined(_RT_)
+typedef struct river_solute_struct
+{
+    double          conc[NSOLUTE];
+    double          flux[NUM_RIVFLX][NSOLUTE];
+} river_solute_struct;
+#endif
+
 #if defined(_BGC_) && !defined(_LUMPED_) && !defined(_LEACHING_)
 /* River nitrogen state variables */
 typedef struct river_nstate_struct
@@ -140,12 +148,6 @@ typedef struct river_solute_struct
     double          flux[NUM_RIVFLX];       /* solute fluxes (kg s-1) */
 } river_solute_struct;
 #endif
-#if defined(_RT_)
-typedef struct river_chmflux_struct
-{
-    double          flux[NUM_RIVFLX][MAXSPS];/* chemical flux (mol s-1) */
-} river_chmflux_struct;
-#endif
 
 /* River structure */
 typedef struct river_struct
@@ -165,6 +167,9 @@ typedef struct river_struct
     river_wflux_struct wf;
     river_ic_struct ic;
     river_bc_struct bc;
+#if defined(_BGC_) || defined(_CYCLES_) || defined(_RT_)
+    river_solute_struct solute;
+#endif
 #if defined(_CYCLES_)
     river_nstate_struct ns;
     river_cyclesic_struct restart_input;
@@ -180,7 +185,6 @@ typedef struct river_struct
 #endif
 #if defined(_RT_)
     chmstate_struct     chms;
-    river_chmflux_struct chmf;
 #endif
 } river_struct;
 

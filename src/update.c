@@ -79,7 +79,7 @@ void Summary(elem_struct *elem, river_struct *river, N_Vector CV_Y,
 
         for (k = 0; k < NumSpc; k++)
         {
-            elem[i].chms.t_mole[k] = MAX(y[SOIL_MOLE(i, k)], 0.0);
+            elem[i].chms.t_mole[k] = MAX(y[SOIL_SOLUTE(i, k)], 0.0);
 
             /* Calculate concentrations */
             elem[i].chms.t_conc[k] = elem[i].chms.t_mole[k] / storage;
@@ -93,7 +93,7 @@ void Summary(elem_struct *elem, river_struct *river, N_Vector CV_Y,
 
         for (k = 0; k < NumSpc; k++)
         {
-            elem[i].chms_geol.t_mole[k] = MAX(y[GEOL_MOLE(i, k)], 0.0);
+            elem[i].chms_geol.t_mole[k] = MAX(y[GEOL_SOLUTE(i, k)], 0.0);
 
             /* Calculate concentrations */
             elem[i].chms_geol.t_conc[k] = (storage > 0.0) ?
@@ -140,7 +140,7 @@ void Summary(elem_struct *elem, river_struct *river, N_Vector CV_Y,
 
         for (k = 0; k < NumSpc; k++)
         {
-            river[i].chms.t_mole[k] = MAX(y[RIVER_MOLE(i, k)], 0.0);
+            river[i].chms.t_mole[k] = MAX(y[RIVER_SOLUTE(i, k)], 0.0);
 
             /* Calculate concentrations */
             river[i].chms.t_conc[k] = (storage > 0.0) ?

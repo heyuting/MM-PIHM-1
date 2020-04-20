@@ -16,12 +16,12 @@
 
 #if defined(_RT_)
 # if defined(_FBR_)
-#  define SOIL_MOLE(i, j)       ((i) * NumSpc + j + 5 * nelem + nriver)
-#  define RIVER_MOLE(i, j)      ((i) * NumSpc + j + (5 + NumSpc) * nelem + nriver)
-#  define GEOL_MOLE(i, j)       ((i) * NumSpc + j + (5 + NumSpc) * nelem + (1 + NumSpc) * nriver)
+#  define SOIL_SOLUTE(i, k)     ((i) * nsolute + k + 5 * nelem + nriver)
+#  define RIVER_SOLUTE(i, k)    ((i) * nsolute + k + (5 + nsolute) * nelem + nriver)
+#  define GEOL_SOLUTE(i, k)     ((i) * nsolute + k + (5 + nsolute) * nelem + (1 + nsolute) * nriver)
 # else
-#  define SOIL_MOLE(i, j)       ((i) * NumSpc + j + 3 * nelem + nriver)
-#  define RIVER_MOLE(i, j)      ((i) * NumSpc + j + (3 + NumSpc) * nelem + nriver)
+#  define SOIL_SOLUTE(i, k)     ((i) * nsolute + k + 3 * nelem + nriver)
+#  define RIVER_SOLUTE(i, k)    ((i) * nsolute + k + (3 + nsolute) * nelem + nriver)
 # endif
 #endif
 
@@ -478,6 +478,13 @@ void            SetAbsTolArray(double, double, N_Vector);
 void            SetAbsTolArray(double, N_Vector);
 #endif
 
+#if defined(_BGC_) || defined(_CYCLES_) || defined(_RT_)
+void            SoluteTransp(double, double, double, elem_struct [],
+    river_struct []);
+double          AdvDiffDisp(double, double, double, double, double, double,
+    double, double, double);
+#endif
+
 #if defined(_BGC_)
 void            BackgroundLitterfall(const epconst_struct *, epvar_struct *,
     const cstate_struct *, cflux_struct *, nflux_struct *);
@@ -746,7 +753,7 @@ int             ParseLocation(const char [], const char [], int);
 void            ApplyPrcpConc(const  rttbl_struct *, forc_struct *,
     elem_struct [], int);
 void            wrap(char *);
-void            Transport(const chemtbl_struct [], const rttbl_struct *,
+void            SoluteConc(const chemtbl_struct [], const rttbl_struct *,
     elem_struct [], river_struct []);
 double          AdvDiffDisp(double, double, double, double, double, double,
     double, double, double);

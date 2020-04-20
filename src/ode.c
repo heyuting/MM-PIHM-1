@@ -50,11 +50,11 @@ int Ode(realtype t, N_Vector CV_Y, N_Vector CV_Ydot, void *pihm_data)
 #if defined(_RT_)
         int             k;
 
-        for (k = 0; k < NumSpc; k++)
+        for (k = 0; k < nsolute; k++)
         {
-            elem->chms.t_mole[k] = MAX(y[SOIL_MOLE(i, k)], 0.0);
+            elem->chms.t_mole[k] = MAX(y[SOIL_SOLUTE(i, k)], 0.0);
 # if defined(_FBR_)
-            elem->chms.t_mole[k] = MAX(y[GEOL_MOLE(i, k)], 0.0);
+            elem->chms.t_mole[k] = MAX(y[GEOL_SOLUTE(i, k)], 0.0);
 # endif
         }
 #endif
@@ -94,9 +94,9 @@ int Ode(realtype t, N_Vector CV_Y, N_Vector CV_Ydot, void *pihm_data)
 #if defined(_RT_)
         int             k;
 
-        for (k = 0; k < NumSpc; k++)
+        for (k = 0; k < nsolute; k++)
         {
-            river->chms.t_mole[k] = MAX(y[RIVER_MOLE(i, k)], 0.0);
+            river->chms.t_mole[k] = MAX(y[RIVER_SOLUTE(i, k)], 0.0);
         }
 #endif
     }
@@ -128,10 +128,15 @@ int Ode(realtype t, N_Vector CV_Y, N_Vector CV_Ydot, void *pihm_data)
 #endif
 
 #if defined(_RT_)
+    SoluteConc(pihm->chemtbl, &pihm->rttbl, pihm->elem, pihm->river);
+#endif
+
+#if defined(_RT_)
     /*
-     * Aqueous species transport fluxes
+     * Solute transport
      */
-    Transport(pihm->chemtbl, &pihm->rttbl, pihm->elem, pihm->river);
+    SoluteTransp(pihm->chemtbl[0].DiffCoe, pihm->chemtbl[0].DispCoe,
+        pihm->rttbl.Cementation, pihm->elem, pihm->river);
 #endif
 
 
@@ -229,27 +234,27 @@ int Ode(realtype t, N_Vector CV_Y, N_Vector CV_Ydot, void *pihm_data)
 #if defined(_RT_)
         int             k;
 
-        for (k = 0; k < NumSpc; k++)
+        for (k = 0; k < nsolute; k++)
         {
-            dy[SOIL_MOLE(i, k)] += (elem->chmf.infil[k] +
+            dy[SOIL_SOLUTE(i, k)] += (elem->solute.infil[k] +
                 elem->chmf.react[k]) / elem->topo.area;
 # if defined(_FBR_)
-            dy[SOIL_MOLE(i, k)] -= elem->chmf.fbr_infil[k] / elem->topo.area;
+            dy[SOIL_SOLUTE(i, k)] -= elem->chmf.fbr_infil[k] / elem->topo.area;
 
-            dy[GEOL_MOLE(i, k)] += (elem->chmf.fbr_infil[k] +
+            dy[GEOL_SOLUTE(i, k)] += (elem->chmf.fbr_infil[k] +
                 elem->chmf.react_geol[k]) / elem->topo.area;
 #  if defined(_TGM_)
-            dy[FBRGW_MOLE(i, k)] -= elem->chmf.fbr_discharge[k] /
+            dy[FBRGW_SOLUTE(i, k)] -= elem->chmf.fbr_discharge[k] /
                 elem->topo.area;
 #  endif
 # endif
 
             for (j = 0; j < NUM_EDGE; j++)
             {
-                dy[SOIL_MOLE(i, k)] -= elem->chmf.subflux[j][k] /
+                dy[SOIL_SOLUTE(i, k)] -= elem->solute.subflux[j][k] /
                     elem->topo.area;
 # if defined(_FBR_)
-                dy[GEOL_MOLE(i, k)] -= elem->chmf.fbrflow[j][k] /
+                dy[GEOL_SOLUTE(i, k)] -= elem->chmf.fbrflow[j][k] /
                     elem->topo.area;
 # endif
             }
@@ -325,11 +330,11 @@ int Ode(realtype t, N_Vector CV_Y, N_Vector CV_Ydot, void *pihm_data)
 #if defined(_RT_)
         int             k;
 
-        for (k = 0; k < NumSpc; k++)
+        for (k = 0; k < nsolute; k++)
         {
             for (j = 0; j < NUM_RIVFLX; j++)
             {
-                dy[RIVER_MOLE(i, k)] -= river->chmf.flux[j][k] /
+                dy[RIVER_SOLUTE(i, k)] -= river->solute.flux[j][k] /
                     river->topo.area;
             }
         }
@@ -349,7 +354,7 @@ int NumStateVar(void)
     nsv = 3 * nelem + nriver;
 
 #if defined(_RT_)
-    nsv += NumSpc * (nelem + nriver);
+    nsv += nsolute * (nelem + nriver);
 #endif
 
 #if defined(_BGC_)
@@ -369,7 +374,7 @@ int NumStateVar(void)
 #endif
 
 #if defined(_FBR_) && defined(_RT_)
-    nsv += NumSpc * nelem;
+    nsv += nsolute * nelem;
 #endif
 
     return nsv;

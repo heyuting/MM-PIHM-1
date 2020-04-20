@@ -427,6 +427,14 @@
 #define FBRFLOW_CTRL            84
 #define CHEM_CTRL               85
 
+#if defined(_BGC_)
+# define NSOLUTE                1
+#elif defined(_CYCLES_)
+# define NSOLUTE                2
+#elif defined(_RT_)
+# define NSOLUTE                MAXSPS
+#endif
+
 #if defined(_CYCLES_)
 #define MAXCROP                 100
 #define MAXOP                   100
@@ -480,23 +488,26 @@ enum stage
 #endif
 
 /* External variable */
-extern int     verbose_mode;
-extern int     debug_mode;
-extern int     append_mode;
-extern int     corr_mode;
-extern int     spinup_mode;
-extern int     fixed_length;
-extern char    project[MAXSTRING];
-extern int     nelem;
-extern int     nriver;
+extern int      verbose_mode;
+extern int      debug_mode;
+extern int      append_mode;
+extern int      corr_mode;
+extern int      spinup_mode;
+extern int      fixed_length;
+extern char     project[MAXSTRING];
+extern int      nelem;
+extern int      nriver;
 #if defined(_BGC_)
-extern int     first_balance;
+extern int      first_balance;
 #endif
 #if defined(_OPENMP)
-extern int     nthreads;
+extern int      nthreads;
 #endif
 #if defined(_RT_)
-int            NumSpc;                      /* number of primary species */
+int             NumSpc;                      /* number of primary species */
+#endif
+#if defined(_BGC_) || defined(_CYCLES_) || defined(_RT_)
+int             nsolute;
 #endif
 
 #endif

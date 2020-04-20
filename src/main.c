@@ -19,6 +19,13 @@ int             first_balance;
 #if defined(_RT_)
 int             NumSpc;
 #endif
+#if defined(_BGC_)
+int             nsolute = 1;
+#elif defined(_CYCLES_)
+int             nsolute = 2;
+#elif defined(_RT_)
+int             nsolute;
+#endif
 
 int main(int argc, char *argv[])
 {
