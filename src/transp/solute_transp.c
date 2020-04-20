@@ -27,7 +27,10 @@ void SoluteTransp(double diff_coef, double disp_coef, double cement,
         {
             int             j;
 
-            river[i].solute.flux[j][k] = 0.0;
+            for (j = 0; j < NUM_RIVFLX; j++)
+            {
+                river[i].solute.flux[j][k] = 0.0;
+            }
         }
     }
 

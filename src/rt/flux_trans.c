@@ -16,6 +16,9 @@ void SoluteConc(const chemtbl_struct chemtbl[], const rttbl_struct *rttbl,
         int             j, k, kk;
         double          storage;
 
+        elem[i].solute.conc_surf[k] = elem[i].prcps.t_conc[k] *
+            rttbl->Condensation;
+
         storage = (elem[i].ws.unsat + elem[i].ws.gw) * elem[i].soil.porosity +
             elem[i].soil.depth * elem[i].soil.smcmin;
 
